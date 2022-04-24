@@ -3,3 +3,6 @@
 compile.bat
 compile.log
 out/
+
+# ignoring extra data folder
+exdata/
