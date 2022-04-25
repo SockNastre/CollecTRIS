@@ -3,14 +3,15 @@
 	;; preparing PPU to accept playfield nametable data
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	LoadPlayfieldNametable:
-		;; reading PPU status to reset high/low latch
-		LDA $2002
+		;; reading PPU status to reset high/low latch for later
+		;; writes to 0x2006 PPU data offset port
+		LDA PPU_STATUS
 
 		;; setting PPU to nametable 1 location
 		LDA #$20
-		STA $2006
+		STA PPU_ADDRESS
 		LDA #$00
-		STA $2006
+		STA PPU_ADDRESS
 
 		;; putting low and high bytes of address (for playfield
 		;; nametable) into pointer
@@ -34,7 +35,7 @@
 		;; copies one background byte from address in low pointer
 		;; plus Y
 		LDA [pointerLow], Y
-		STA $2007
+		STA PPU_DATA
 
 		;; row loop counter, runs 256 times before continuing down
 		INY
@@ -55,14 +56,15 @@
 	;; preparing PPU to accept playfield nametable attributes data
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	LoadPlayfieldAttributes:
-		;; reading PPU status to reset high/low latch
-		LDA $2002
+		;; reading PPU status to reset high/low latch for later
+		;; writes to 0x2006 PPU data offset port
+		LDA PPU_STATUS
 
 		;; setting PPU to nametable 1 attributes location
 		LDA #$23
-		STA $2006
+		STA PPU_ADDRESS
 		LDA #$C0
-		STA $2006
+		STA PPU_ADDRESS
 
 		;; setting X = 0 to prepare for attribute loading loop
 		LDX #0
@@ -74,7 +76,7 @@
 		;; loading attribute data into A accumulator, at index X,
 		;; then putting it into PPU data port
 		LDA Playfield_Nametable_Attributes, X
-		STA $2007
+		STA PPU_DATA
 
 		;; incrementing index X
 		INX

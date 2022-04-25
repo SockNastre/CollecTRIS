@@ -1,132 +1,156 @@
 
-	;; in theory, if this code is made to work it should allow blocks
-	;; to be placed on blocks, lines 432 through 435 are the problem
-	;CheckBelowBlocksStartup:
-	;	LDA belowBlocksLowPointer
-	;	CMP #IS_CANCELLED
-	;	BEQ GoToPlaceTetrimino
+	CheckBelowBlocksStartup:
+		;; if the blow block low pointer is equal to the cancellation
+		;; byte then we skip to the end of this entire process
+		LDA belowBlocksLowPointer
+		CMP #IS_CANCELLED
+		BEQ GoToCheckBelowBlocksDone
 
-	;	JMP CheckBelowBlocks
-	;GoToPlaceTetrimino:
-	;	JMP PlaceTetrimino
-	;CheckBelowBlocks:
-	;	LDA belowBlocksLowPointer
-	;	STA $2006
-	;	LDA belowBlocksHighPointer
-	;	STA $2006
+		;; going to official start of checking low blocks
+		JMP CheckBelowBlocks
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; jumps to end of entire check below blocks process
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	GoToCheckBelowBlocksDone:
+		JMP CheckBelowBlocksDone
 
-	;	LDA $2007
-	;	STA temp2
-	;	CMP #TETRIMINO_BLANK_TILE
-	;	BNE BelowBlockExists
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; checking below blocks to see if tetrimino should be placed
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	CheckBelowBlocks:
+		;; loading offset in PPU address where below blocks in
+		;; nametable should be stored
+		LDA belowBlocksLowPointer
+		STA PPU_ADDRESS
+		STA temp5
+		LDA belowBlocksHighPointer
+		STA PPU_ADDRESS
+		STA temp6
 
-		;; weird bug where I have to load another byte from PPU data
-		;; port else the next below block is never loaded
-		;; LDA $2007
+		;; checking if first block below tetrimino is not blank
+		LDA PPU_DATA
+		CMP #TETRIMINO_BLANK_TILE
+		BNE BelowBlockExists
 
-	;	LDA $2007
-	;	CMP #TETRIMINO_BLANK_TILE
-	;	BNE BelowBlock2Exists
+		;; checking if second block below tetrimino is not blank
+		LDA PPU_DATA
+		CMP #TETRIMINO_BLANK_TILE
+		BNE BelowBlockExists
 
-	;	LDA #$0D
-	;	STA temp1
+		;; since neither below block was non-blank, process is done
+		JMP CheckBelowBlocksDone
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; handling first or second below block existing
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	BelowBlockExists:
+		;; making sure that the below block is not the default
+		;; background tile (weird bug) or the bottom of the playgrid
+		CMP #$00
+		BEQ GoToCheckBelowBlocksDone
+		CMP #$81
+		BEQ GoToCheckBelowBlocksDone
 
-	;	JMP PlaceTetrimino
-	;BelowBlockExists:
-		;; fixes weird bug where below block is detected at very start of the
-		;; game (when it should not be detected)
-		;CMP #$00
-		;BEQ PlaceTetrimino
-
-	;	CMP #$81
-	;	BEQ PlaceTetrimino
-
-	;	LDA #$03
-	;	STA temp1
-	;	LDA #$68
-	;	STA temp3
-
-	;	LDA ticks
-	;	CMP #0
-	;	BNE PlaceTetrimino
+		LDA #0
+		STA PPU_ADDRESS
+		STA PPU_ADDRESS
 
 		;LDA belowBlocksLowPointer
-		;STA temp5
+		;STA PPU_ADDRESS
 		;LDA belowBlocksHighPointer
+		;STA PPU_ADDRESS
+
+		;LDA PPU_DATA
+		;STA temp1
+
+		;CMP #TETRIMINO_BLANK_TILE
+		;BEQ GoToCheckBelowBlocksDone
+
+		LDA belowBlocksLowPointer
+		STA temp5
+		LDA belowBlocksHighPointer
+		STA temp6
+
+
+		LDA yBlock1
+		CMP #07
+		BEQ GoToCheckBelowBlocksDone
+
+		;; since below block exists, we will want to place the
+		;; current tetrimino blocks later
+		INC isPlaceBlocks
+
+	GetTetriminoBlockPositions:
+		;; starting off low and high pointers at below block start
+		;; pointer so we can transition backwards
+		LDA belowBlocksLowPointer
+		STA pointerLow
+		LDA belowBlocksHighPointer
+		STA pointerHigh
+
+		LDX #0
+		JMP GetTetriminoBottomRowPosition
+
+	GetTetriminoBottomRowPositionDecrementLow:
+		DEC pointerLow
+	GetTetriminoBottomRowPosition:
+		LDA pointerHigh
+		SEC
+		SBC #1
+		STA pointerHigh
+
+		INX
+
+		CMP #0
+		BEQ GetTetriminoBottomRowPositionDecrementLow
+
+		CPX #32
+		BNE GetTetriminoBottomRowPosition
+
+		LDA pointerLow
+		STA bottomRowLowPointer
+		;STA temp5
+		LDA pointerHigh
+		STA bottomRowHighPointer
 		;STA temp6
 
-	;	JMP PlaceTetrimino
-	;BelowBlock2Exists:
-	;	CMP #$81
-	;	BEQ PlaceTetrimino
+		LDX #0
+		JMP GetTetriminoTopRowPosition
 
-	;	LDA #$04
-	;	STA temp1
-	;	LDA #$69
-	;	STA temp4
-	;	LDA $2007
-	;	CMP #TETRIMINO_BLANK_TILE
-	;	BNE BelowBlockExists
+	GetTetriminoTopRowPositionDecrementLow:
+		DEC pointerLow
+	GetTetriminoTopRowPosition:
+		LDA pointerHigh
+		SEC
+		SBC #1
+		STA pointerHigh
 
-	;	;; resetting PPU data address
-	;	LDA #0
-	;	STA $2006
-	;	STA $2006
+		INX
 
-	;	JMP BelowBlockDoesNotExist
-	;BelowBlockExists:
-	;	LDA belowBlocksLowPointer
-	;	STA topRowLowPointer
-	;	LDA belowBlocksHighPointer
-	;	STA topRowHighPointer
-	;BelowBlockDecrementTopLow:
-	;	DEC topRowLowPointer
-	;BelowBlockDecrementTopHigh:
-	;	LDA topRowHighPointer
-	;	SEC
-	;	SBC #1
-	;	STA topRowHighPointer
+		CMP #0
+		BEQ GetTetriminoTopRowPositionDecrementLow
 
-	;	CMP #0
-	;	BEQ BelowBlockDecrementTopLow
+		CPX #32
+		BNE GetTetriminoTopRowPosition
 
-	;	INX
-	;	CPX #64
-	;	BNE BelowBlockDecrementTopHigh
+		LDA pointerLow
+		STA topRowLowPointer
+		;STA temp5
+		LDA pointerHigh
+		STA topRowHighPointer
+		;STA temp6
 
-	;	LDA belowBlocksLowPointer
-	;	STA bottomRowLowPointer
-	;	LDA belowBlocksHighPointer
-	;	STA bottomRowHighPointer
+		LDA #IS_CANCELLED
+		STA belowBlocksLowPointer
 
-	;BelowBlockDecrementBottomLow:
-	;	DEC topRowLowPointer
-	;BelowBlockDecrementBottomHigh:
-	;	LDA topRowHighPointer
-	;	SEC
-	;	SBC #1
-	;	STA topRowHighPointer
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; done checking below blocks
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	CheckBelowBlocksDone:
+		;; resetting PPU data address
+		;LDA #0
+		;STA PPU_ADDRESS
+		;STA PPU_ADDRESS
 
-	;	CMP #0
-	;	BEQ BelowBlockDecrementBottomLow
+		;LDA $2002
 
-	;	INX
-	;	CPX #64
-	;	BNE BelowBlockDecrementBottomHigh
-
-	;	INC isPlaceBlocks
-
-	;	JMP PlaceTetrimino
-	;BelowBlockDoesNotExist:
-
-		;LDA belowBlocksLowPointer
-		;STA $2006
-		;LDA belowBlocksHighPointer
-		;STA $2006
-
-		;LDA #$49
-		;STA $2007
-
-		;LDA #00
-		;STA $2006
-		;STA $2006
+		LDX #0

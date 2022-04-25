@@ -51,10 +51,14 @@
 	;; vblank, time for graphics updates.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     NMI:
+		;; reading PPU status to reset high/low latch for later
+		;; writes to 0x2006 PPU data offset port
+		LDA PPU_STATUS
+
 		;; resetting PPU CTRL and MASK
 		LDA #0
-		STA $2000
-		STA $2001
+		STA PPU_CTRL
+		STA PPU_MASK
 
 		;; if the tetrimino is not drawn, then we branch to graphics-
 		;; enabling subroutine and skip some tetrimino-processing
@@ -91,23 +95,24 @@
 	EnableGraphicsRendering:
 		;; enabling NMI, sprites from pattern table 0, and background
 		;; from pattern table 1
-		LDA #%10010000
-		STA $2000
+		LDA #PPU_CTRL_DAT
+		STA PPU_CTRL
 
 		;; enabling sprites, background, and disabling clipping on
 		;; the left side
-		LDA #%00011110
-		STA $2001
+		LDA #PPU_MASK_DAT
+		STA PPU_MASK
 
 		;; incrementing tick-counting ticks variable
 		INC ticks
 
+		;; setting up direct memory access for sprites.
 		;; setting the low byte (0x00) and then high byte (0x02) of
-		;; the RAM address, starting the transfer, ending NMI
+		;; the RAM address, starting the transfer.
 		LDA #$00
-		STA $2003
+		STA PPU_OAM_ADDR
 		LDA #$02
-		STA $4014
+		STA DMA
 
 		;; resetting X/Y registers and A accumulator
 		LDX #0

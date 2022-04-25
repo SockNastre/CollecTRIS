@@ -24,6 +24,30 @@ temp5 .rs 1
 temp6 .rs 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; memory offsets
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; sprite table offset in accessible memory
+SPRITE_TABLE = $0200
+
+;; direct memory access offset
+DMA = $4014
+
+;; default PPU_CTRL and PPU_MASK data
+PPU_CTRL_DAT = %10010000
+PPU_MASK_DAT = %00011110
+
+;; PPU data ports
+PPU_CTRL     = $2000
+PPU_MASK     = $2001
+PPU_STATUS   = $2002
+PPU_OAM_ADDR = $2003
+PPU_OAM_DATA = $2004
+PPU_SCROLL   = $2005
+PPU_ADDRESS  = $2006
+PPU_DATA     = $2007
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; general
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

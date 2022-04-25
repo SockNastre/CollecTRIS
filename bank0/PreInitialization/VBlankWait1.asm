@@ -1,4 +1,4 @@
 
 	VBlankWait1:
-		BIT $2002
+		BIT PPU_STATUS
 		BPL VBlankWait1

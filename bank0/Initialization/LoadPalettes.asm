@@ -4,13 +4,13 @@
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	LoadPalettes:
 		;; reading PPU status to reset high/low latch
-		LDA $2002
+		LDA PPU_STATUS
 
 		;; setting PPU to palette location
 		LDA #$3F
-		STA $2006
+		STA PPU_ADDRESS
 		LDA #$00
-		STA $2006
+		STA PPU_ADDRESS
 
 		;; setting X = 0 to prepare for background palette
 		;; loading loop
@@ -23,7 +23,7 @@
 		;; loading background palette data into A accumulator, at
 		;; index X, then putting it into PPU data port
 		LDA Palette_Background, X
-		STA $2007
+		STA PPU_DATA
 
 		;; incrementing index X
 		INX
@@ -44,7 +44,7 @@
 		;; loading sprite palette data into A accumulator, at
 		;; index X, then putting it into PPU data port
 		LDA Palette_Sprites, X
-		STA $2007
+		STA PPU_DATA
 
 		;; incrementing index X
 		INX

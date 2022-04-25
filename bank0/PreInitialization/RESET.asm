@@ -9,13 +9,13 @@
 		STX $4017
 
 		;; setting up stack
-		LDX #IS_CANCELLED
+		LDX #$FF
 		TXS
 
 		;; resetting value of X (0xFF + 1 = 0x00)
 		INX
 
 		;; disabling NMI, rendering, and DMC IRQs
-		STX $2000
-		STX $2001
+		STX PPU_CTRL
+		STX PPU_MASK
 		STX $4010
