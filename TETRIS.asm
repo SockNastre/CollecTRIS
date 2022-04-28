@@ -59,9 +59,6 @@ pointerHigh .rs 1
 FALSE = 0
 TRUE  = 1
 
-;; cancelation/invalid byte
-IS_CANCELLED = $FF
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tetrimino
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

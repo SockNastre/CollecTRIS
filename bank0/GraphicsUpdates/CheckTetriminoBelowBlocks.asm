@@ -106,9 +106,6 @@
 		LDA pointerHigh
 		STA topRowHighPointer
 
-		LDA #IS_CANCELLED
-		STA belowBlocksLowPointer
-
 		JMP PlaceTetrimino
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; done checking below blocks
