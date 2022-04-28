@@ -13,15 +13,18 @@
 
 	.rsset $0000
 
-;; temporary variables, NEVER meant for any form of long-term of permanent
-;; storage, these variables should be exhausted at the end of any subroutine
-;; or process if they were used
+;; temporary debug variables, NEVER meant for any form of long-term of
+;; permanent storage, these variables should be exhausted at the end of any
+;; subroutine or process if they were used.
+;; ideally, one should not use these at all if it can be helped.
 temp1 .rs 1
 temp2 .rs 1
 temp3 .rs 1
 temp4 .rs 1
 temp5 .rs 1
 temp6 .rs 1
+temp7 .rs 1
+temp8 .rs 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; memory offsets
