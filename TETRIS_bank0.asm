@@ -103,6 +103,11 @@
 		CMP #1
 		BEQ GoToGraphicsUpdates2
 
+		;; if ticks modulo 3 is equal to 2, then we perform third
+		;; graphical update section
+		CMP #2
+		BEQ GoToGraphicsUpdates3
+
 		;; otherwise, no graphics updates occur
 		JMP EnableGraphicsRendering
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -115,6 +120,11 @@
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	GoToGraphicsUpdates2:
 		JMP GraphicsUpdates2
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Jumps to third graphical updates subroutine.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	GoToGraphicsUpdates3:
+		JMP GraphicsUpdates3
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; First graphical updates.
@@ -147,6 +157,19 @@
 	;; moved to the right.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.include "bank0\GraphicsUpdates\CheckTetriminoRightSide.asm"
+
+		;; skipping any other graphical updates
+		JMP EnableGraphicsRendering
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Third graphical updates.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	GraphicsUpdates3:
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Checking to see if playfield should be reset, and resetting it
+	;; if it needs to be.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	.include "bank0\GraphicsUpdates\ResetPlayfield.asm"
 
 		;; skipping any other graphical updates
 		JMP EnableGraphicsRendering
