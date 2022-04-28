@@ -67,8 +67,9 @@
 		CMP #FALSE
 		BEQ GoToEnableGraphicsRendering
 
-		;; going to GraphicsUpdates subroutine
-		JMP GraphicsUpdates
+		;; going to GraphicsUpdatesFrameCheck subroutine to see what
+		;; graphics updates may occur
+		JMP GraphicsUpdatesFrameCheck
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Jumps to EnableGraphicsRendering subroutine.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,13 +77,15 @@
 		JMP EnableGraphicsRendering
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Anything that updates or reads graphics.
+	;; Preparing to see what graphical updates to perform.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	GraphicsUpdates:
 	GraphicsUpdatesFrameCheck:
 		;; preparing A accumulator for modulo about to be performed
 		LDA ticks
 		SEC
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Performs modulo to check tick to determine graphical update.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	GraphicsUpdatesCheckModulo:
 		;; performs modulo, looping as many times as needed until
 		;; process is complete and modulo result is in A accumulator
@@ -90,19 +93,32 @@
 		BCS GraphicsUpdatesCheckModulo
 		ADC #3
 
+		;; if ticks modulo 3 is equal to 0, then we perform first
+		;; graphical update section
 		CMP #0
 		BEQ GoToGraphicsUpdates1
 
-		CMP #2
+		;; if ticks modulo 3 is equal to 1, then we perform second
+		;; graphical update section
+		CMP #1
 		BEQ GoToGraphicsUpdates2
 
+		;; otherwise, no graphics updates occur
 		JMP EnableGraphicsRendering
-
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Jumps to first graphical updates subroutine.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	GoToGraphicsUpdates1:
 		JMP GraphicsUpdates1
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Jumps to second graphical updates subroutine.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	GoToGraphicsUpdates2:
 		JMP GraphicsUpdates2
 
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; First graphical updates.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	GraphicsUpdates1:
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Checking below tetrimino blocks, seeing if we should place
@@ -114,16 +130,26 @@
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.include "bank0\GraphicsUpdates\PlaceTetrimino.asm"
 
+		;; skipping any other graphical updates
 		JMP EnableGraphicsRendering
 
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Second graphical updates.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	GraphicsUpdates2:
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Checking left side of tetrimino, seeing if block can be
 	;; moved to the left.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.include "bank0\GraphicsUpdates\CheckTetriminoLeftSide.asm"
-
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Checking right side of tetrimino, seeing if block can be
+	;; moved to the right.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.include "bank0\GraphicsUpdates\CheckTetriminoRightSide.asm"
+
+		;; skipping any other graphical updates
+		JMP EnableGraphicsRendering
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Now enabling graphics rendering.
@@ -155,16 +181,6 @@
 		;; incrementing tick-counting ticks variable
 		INC ticks
 
-		;; incrementing tick-counter for NMI
-		INC nmiTicks
-		LDA nmiTicks
-		CMP #4
-		BNE DoneEnableGraphicsRendering
-
-		LDA #0
-		STA nmiTicks
-
-	DoneEnableGraphicsRendering:
 		;; resetting X/Y registers and A accumulator
 		LDX #0
 		LDY #0
@@ -197,64 +213,13 @@
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	.include "bank0\Tetrimino_GetBlocksBelow.asm"
 
-	GetTetriminoLeftSide:
-		LDA belowBlocksLowPointer
-		STA pointerLow
-		LDA belowBlocksHighPointer
-		STA pointerHigh
-
-		LDX #0
-		JMP GettingLeftBlockBottom
-	GettingLeftBlockBottomDecrementLow:
-		DEC pointerLow
-	GettingLeftBlockBottom:
-		LDA pointerHigh
-		SEC
-		SBC #1
-		STA pointerHigh
-
-		INX
-
-		CMP #0
-		BEQ GettingLeftBlockBottomDecrementLow
-
-		CPX #33
-		BNE GettingLeftBlockBottom
-
-		LDA pointerLow
-		STA leftBottomBlockLowPointer
-		LDA pointerHigh
-		STA leftBottomBlockHighPointer
-
-	GetTetriminoRightSide:
-		LDA belowBlocksLowPointer
-		STA pointerLow
-		LDA belowBlocksHighPointer
-		STA pointerHigh
-
-		LDX #0
-		JMP GettingRightBlockBottom
-	GettingRightBlockBottomDecrementLow:
-		DEC pointerLow
-	GettingRightBlockBottom:
-		LDA pointerHigh
-		SEC
-		SBC #1
-		STA pointerHigh
-
-		INX
-
-		CMP #0
-		BEQ GettingRightBlockBottomDecrementLow
-
-		CPX #30
-		BNE GettingRightBlockBottom
-
-		LDA pointerLow
-		STA rightBottomBlockLowPointer
-		LDA pointerHigh
-		STA rightBottomBlockHighPointer
-
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Process of getting nametable pointers to left/right side
+	;; lower blocks (used for detecting collision in NMI second
+	;; graphical update).
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	.include "bank0\Tetrimino_GetLeftSide.asm"
+	.include "bank0\Tetrimino_GetRightSide.asm"
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; Last subroutine done before game code NMI loop ends.
