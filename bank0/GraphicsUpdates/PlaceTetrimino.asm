@@ -1,8 +1,11 @@
 
 	PlaceTetrimino:
+		;STA temp2
+
 		;; checking if blocks are to be placed, if they are not then
 		;; we skip placing the tetrimino
 		LDA isPlaceBlocks
+		;STA temp1
 		CMP #FALSE
 		BEQ PlaceTetriminoDone
 
@@ -34,6 +37,8 @@
 		;; to be placed
 		DEC isTetriminoDrawn
 		DEC isPlaceBlocks
+
+		JMP EnableGraphicsRendering
 	PlaceTetriminoDone:
 		;; resetting PPU data address
 		LDA #0

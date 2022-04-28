@@ -1,19 +1,4 @@
 
-	CheckBelowBlocksStartup:
-		;; if the blow block low pointer is equal to the cancellation
-		;; byte then we skip to the end of this entire process
-		LDA belowBlocksLowPointer
-		CMP #IS_CANCELLED
-		BEQ GoToCheckBelowBlocksDone
-
-		;; going to official start of checking low blocks
-		JMP CheckBelowBlocks
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; jumps to end of entire check below blocks process
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	GoToCheckBelowBlocksDone:
-		JMP CheckBelowBlocksDone
-
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; checking below blocks to see if tetrimino should be placed
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,13 +7,15 @@
 		;; nametable should be stored
 		LDA belowBlocksLowPointer
 		STA PPU_ADDRESS
-		STA temp5
 		LDA belowBlocksHighPointer
 		STA PPU_ADDRESS
-		STA temp6
+
+		;; discarding last PPU data byte
+		LDA PPU_DATA
 
 		;; checking if first block below tetrimino is not blank
 		LDA PPU_DATA
+		STA temp2
 		CMP #TETRIMINO_BLANK_TILE
 		BNE BelowBlockExists
 
@@ -50,35 +37,13 @@
 		CMP #$81
 		BEQ GoToCheckBelowBlocksDone
 
-		LDA #0
-		STA PPU_ADDRESS
-		STA PPU_ADDRESS
-
-		;LDA belowBlocksLowPointer
-		;STA PPU_ADDRESS
-		;LDA belowBlocksHighPointer
-		;STA PPU_ADDRESS
-
-		;LDA PPU_DATA
-		;STA temp1
-
-		;CMP #TETRIMINO_BLANK_TILE
-		;BEQ GoToCheckBelowBlocksDone
-
-		LDA belowBlocksLowPointer
-		STA temp5
-		LDA belowBlocksHighPointer
-		STA temp6
-
-
 		LDA yBlock1
-		CMP #07
+		CMP #06
 		BEQ GoToCheckBelowBlocksDone
 
 		;; since below block exists, we will want to place the
 		;; current tetrimino blocks later
 		INC isPlaceBlocks
-
 	GetTetriminoBlockPositions:
 		;; starting off low and high pointers at below block start
 		;; pointer so we can transition backwards
@@ -89,7 +54,13 @@
 
 		LDX #0
 		JMP GetTetriminoBottomRowPosition
-
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; jumps to end of entire check below blocks process, this is
+	;; placed in the middle of the subroutines so that it can be
+	;; accessed easily
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	GoToCheckBelowBlocksDone:
+		JMP CheckBelowBlocksDone
 	GetTetriminoBottomRowPositionDecrementLow:
 		DEC pointerLow
 	GetTetriminoBottomRowPosition:
@@ -108,10 +79,8 @@
 
 		LDA pointerLow
 		STA bottomRowLowPointer
-		;STA temp5
 		LDA pointerHigh
 		STA bottomRowHighPointer
-		;STA temp6
 
 		LDX #0
 		JMP GetTetriminoTopRowPosition
@@ -134,23 +103,20 @@
 
 		LDA pointerLow
 		STA topRowLowPointer
-		;STA temp5
 		LDA pointerHigh
 		STA topRowHighPointer
-		;STA temp6
 
 		LDA #IS_CANCELLED
 		STA belowBlocksLowPointer
 
+		JMP PlaceTetrimino
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; done checking below blocks
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	CheckBelowBlocksDone:
 		;; resetting PPU data address
-		;LDA #0
-		;STA PPU_ADDRESS
-		;STA PPU_ADDRESS
-
-		;LDA $2002
+		LDA #0
+		STA PPU_ADDRESS
+		STA PPU_ADDRESS
 
 		LDX #0

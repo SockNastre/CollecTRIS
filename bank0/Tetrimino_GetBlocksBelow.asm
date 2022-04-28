@@ -9,6 +9,10 @@
 		LDA #$00
 		STA pointerHigh
 
+		LDY yBlock1
+		INY
+		STY yBlock1
+
 		;; resetting Y register and going into high pointer
 		;; generation loop for bottom block pointer
 		LDY #0
@@ -53,6 +57,11 @@
 		INY
 		CPY yBlock1
 		BNE IncrementBelowBlocksHighY
+
+		LDY yBlock1
+		DEY
+		STY yBlock1
+
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; now we will begin to go to the blocks below the current
 	;; tetrimino, as we are one row behind that
@@ -98,14 +107,6 @@
 
 		;; skipping cancelation subroutine
 		JMP GetBlocksBelowTetriminoDone
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; should be called when below block pointers need to be
-	;; nullified
-	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	GetBlocksBelowTetriminoCancel:
-		LDA #IS_CANCELLED
-		STA belowBlocksLowPointer
-		STA belowBlocksHighPointer
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; getting blocks below tetrimino is now done
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

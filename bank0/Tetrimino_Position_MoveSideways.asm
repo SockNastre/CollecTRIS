@@ -54,6 +54,12 @@
 		AND #%00000001 
 		BEQ ReadDPadRight
 
+		;; if left space is not open (false), then we do not move
+		;; tetrimino right
+		LDA isLeftSpaceOpen
+		CMP #FALSE
+		BEQ JumpToMoveTetriminoSideDone
+
 		;; preparing X register for upcoming loop
 		LDX #0
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -87,6 +93,12 @@
 		LDA $4016
 		AND #%00000001 
 		BEQ MoveTetriminoSideDone
+
+		;; if right space is not open (false), then we do not move
+		;; tetrimino right
+		LDA isRightSpaceOpen
+		CMP #FALSE
+		BEQ JumpToMoveTetriminoSideDone
 
 		;; preparing X register for upcoming loop
 		LDX #0

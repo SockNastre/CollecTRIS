@@ -120,11 +120,6 @@
 	PointerLoopsDone:
 		;; we now want blocks to be placed in main NMI subroutine
 		INC isPlaceBlocks
-
-		;; we will jump here, because there are no blocks below the
-		;; tetrimino currently so running that whole process is
-		;; useless
-		JMP GetBlocksBelowTetriminoCancel
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	;; floor collision checking is now done
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

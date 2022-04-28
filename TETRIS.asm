@@ -73,6 +73,14 @@ isTetriminoDrawn .rs 1
 ;; next NMI loop, block places in NMI upon reading)
 isPlaceBlocks .rs 1
 
+;; whether the tetrimino has hit the bottom or not
+hasTetriminoHitBottom .rs 1
+
+;; indicating if left or right spaces of blocks are open
+;; for tetrimino to be moved into or not
+isLeftSpaceOpen  .rs 1
+isRightSpaceOpen .rs 1
+
 ;; X and Y block positions of (if it exists) bottom left
 ;; block of tetrimino
 xBlock1 .rs 1
@@ -89,6 +97,12 @@ topRowHighPointer    .rs 1
 bottomRowLowPointer  .rs 1
 bottomRowHighPointer .rs 1
 
+;; pointers to left/right bottom
+leftBottomBlockLowPointer   .rs 1
+leftBottomBlockHighPointer  .rs 1
+rightBottomBlockLowPointer  .rs 1
+rightBottomBlockHighPointer .rs 1
+
 ;; pointers to blocks just below current blocks
 belowBlocksLowPointer  .rs 1
 belowBlocksHighPointer .rs 1
@@ -98,7 +112,7 @@ tetriminoDownSpeed .rs 1
 tetriminoSideSpeed .rs 1
 
 ;; default down and sideways speeds
-TETRIMINO_DEFAULT_DOWNSPEED = 7
+TETRIMINO_DEFAULT_DOWNSPEED = 6
 TETRIMINO_DEFAULT_SIDESPEED = 4
 
 ;; minimum and maximum X position values possible for a
@@ -123,7 +137,8 @@ TETRIMINO_BLANK_TILE = $0B
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tick counting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-ticks .rs 1
+ticks    .rs 1
+nmiTicks .rs 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; palettes, sprites, background, or attributes
