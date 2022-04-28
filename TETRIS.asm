@@ -54,8 +54,9 @@ PPU_DATA     = $2007
 ;; general
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; seeding value for entire game (RNG-related)
-seed .rs 1
+;; seeding values for entire game (RNG-related)
+seed1 .rs 1
+seed2 .rs 1
 
 ;; low and high bytes of two-byte integer
 pointerLow  .rs 1
