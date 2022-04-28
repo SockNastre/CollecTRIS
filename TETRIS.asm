@@ -67,6 +67,22 @@ FALSE = 0
 TRUE  = 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; good and bad blocks for falling tetrimino
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; whether the good/bad blocks are drawn yet or not
+isGoodBlockDrawn .rs 1
+isBadBlockDrawn  .rs 1
+
+;; X and Y sprite coordinates of good block
+goodBlockX .rs 1
+goodBlockY .rs 1
+
+;; X and Y sprite coordinates of bad block
+badBlockX .rs 1
+badBlockY .rs 1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tetrimino
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
