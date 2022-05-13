@@ -37,7 +37,7 @@
 
 	;; setting up some necessary functions at position 0xFFFA, where first of
 	;; three vectors star
-    .org $FFFA
-    .dw NMI    ;; when NMI happens
-    .dw RESET  ;; when processor first turns on or resets
-    .dw 0      ;; IRQ not being used
+	.org $FFFA
+	.dw NMI    ;; when NMI happens
+	.dw RESET  ;; when processor first turns on or resets
+	.dw 0      ;; IRQ not being used
