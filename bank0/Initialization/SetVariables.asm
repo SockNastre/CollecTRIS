@@ -18,6 +18,10 @@
 		LDA #$3F
 		STA temp8
 
+		;; setting default life count
+		LDY #LIFE_DEFAULT_COUNT
+		STY lifeCount
+
 		;; setting the tetrimino down/side speed variables to their
 		;; default speeds
 		LDX #TETRIMINO_DEFAULT_DOWNSPEED

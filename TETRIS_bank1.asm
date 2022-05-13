@@ -12,7 +12,7 @@
 		.incbin "bin\Palette_Sprites.bin"
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Tile pieces for the playfield, and attributes for tiles
+	;; Tile pieces for the playfield, and attributes for tiles.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	Playfield_Nametable:
 		.incbin "bin\Nametable_Playfield.bin"
@@ -20,10 +20,20 @@
 		.incbin "bin\Nametable_Playfield_Attributes.bin"
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	;; Tetrimino O piece
+	;; Tetrimino O piece sprites.
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	Sprite_Tetrimino_OPiece:
 		.incbin "bin\Sprite_Tetrimino_OPiece.bin"
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Score sprites, "00000".
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	Sprite_Score:
+		.incbin "bin\Sprite_Score.bin"
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;; Life sprites, five hearts displayed at right.
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	Sprite_Lives:
+		.incbin "bin\Sprite_Lives.bin"
 
 	;; setting up some necessary functions at position 0xFFFA, where first of
 	;; three vectors star

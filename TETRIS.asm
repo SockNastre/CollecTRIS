@@ -33,6 +33,15 @@ temp8 .rs 1
 ;; sprite table offset in accessible memory
 SPRITE_TABLE = $0200
 
+;; where score sprites are saved
+SCORE_SPRITE = $0218
+
+;; where life sprites are saved
+LIFE_SPRITE = $022C
+
+;; amount of bytes storing life sprites
+LIFE_SPRITE_BYTE_COUNT = 20
+
 ;; direct memory access offset
 DMA = $4014
 
@@ -62,9 +71,23 @@ seed2 .rs 1
 pointerLow  .rs 1
 pointerHigh .rs 1
 
+;; score used in game
+scoreLow  .rs 1
+scoreHigh .rs 1
+
 ;; true and false byte constants
 FALSE = 0
 TRUE  = 1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; related to lives in game
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; amount of lives player has
+lifeCount .rs 1
+
+;; default lifes player gets
+LIFE_DEFAULT_COUNT = 5
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; good and bad blocks for falling tetrimino
@@ -157,14 +180,14 @@ TETRIMINO_BLANK_TILE = $0B
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; tick counting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-ticks    .rs 1
-nmiTicks .rs 1
+ticks .rs 1
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; palettes, sprites, background, or attributes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 PALETTE_COUNT   = 16 ;; amount of colors in palettes
 ATTRIBUTE_COUNT = 64 ;; amount of attributes in attribute table
+SCORE_SPR_COUNT = 20 ;; amount of sprites used for score
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;; Main Code
